@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humanoid AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .main-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            height: 600px;
+            gap: 20px;
+        }
+
+        .history-sidebar {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid #333;
+        }
+
+        .chat-container {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid #333;
+        }
+
+        .chat-header {
+            background: #1a1a1a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid #333;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .chat-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .status-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .avatar.user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .avatar.ai {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #444;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: #ffffff;
+            color: #000000;
+            border-bottom-right-radius: 5px;
+            border: 1px solid #444;
+        }
+
+        .message.ai .message-content {
+            background: #2a2a2a;
+            color: #ffffff;
+            border: 1px solid #444;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .message.ai .message-time {
+            text-align: left;
+        }
+
+        .speaker-icon {
+            cursor: pointer;
+            margin-left: 10px;
+            padding: 5px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid #444;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            color: #000000;
+        }
+
+        .speaker-icon:hover {
+            background: #e0e0e0;
+            color: #000000;
+            transform: scale(1.1);
+        }
+
+        .speaker-icon.playing {
+            background: #e0e0e0;
+            color: #000000;
+            animation: pulse 1s infinite;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .message.ai .message-header {
+            justify-content: flex-start;
+        }
+
+        .message.user .message-header {
+            justify-content: flex-end;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: #1a1a1a;
+            border-top: 1px solid #333;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #444;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s ease;
+            background: #2a2a2a;
+            color: #ffffff;
+        }
+
+        .chat-input:focus {
+            border-color: #ffffff;
+        }
+
+        .chat-input::placeholder {
+            color: #888;
+        }
+
+        .send-button {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #444;
+            padding: 18px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            background: #e0e0e0;
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            background: #666;
+            color: #333;
+        }
+
+        .clear-button {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #444;
+            padding: 18px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+	        font-weight: 600;
+            font-size: 18px;
+            margin-left: 10px;
+            transition: background 0.3s ease;
+            min-width: 120px;
+        }
+
+        .clear-button:hover {
+            background: #e0e0e0;
+        }
+
+        .clear-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #666;
+            color: #333;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            background: #2a2a2a;
+            border-radius: 20px;
+            border: 1px solid #444;
+            max-width: 70%;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .error-message {
+            background: #2a2a2a;
+            color: #ff6b6b;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid #444;
+        }
+
+        .history-header {
+            background: #1a1a1a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .history-list {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .history-item {
+            background: #2a2a2a;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .history-item:hover {
+            background: #3a3a3a;
+            transform: translateY(-2px);
+        }
+
+        .history-item.active {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+
+        .history-item .timestamp {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .history-item.active .timestamp {
+            color: #666;
+        }
+
+        .no-history {
+            text-align: center;
+            color: #888;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                height: 100vh;
+                max-width: 100%;
+                gap: 10px;
+            }
+
+            .history-sidebar {
+                width: 100%;
+                height: 200px;
+            }
+
+            .chat-container {
+                height: calc(100vh - 210px);
+                border-radius: 0;
+                margin: 0;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="history-sidebar">
+            <div class="history-header">
+                <h3>Chat History</h3>
+                <p>Previous conversations</p>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="no-history">No previous conversations</div>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="status-indicator"></div>
+                <p>Ask me anything! I'm here to help you with any questions.</p>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <div class="avatar ai">AI</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <div class="speaker-icon" onclick="speakText('Hello! I\'m your humanoid AI assistant. I\'m here to help you with any questions you might have. Feel free to ask me anything - from general knowledge to specific problems, I\'m ready to assist you!', this)" title="Listen to this message">🔊</div>
+                        </div>
+                        <div>Hello! I'm your humanoid AI assistant. I'm here to help you with any questions you might have. Feel free to ask me anything - from general knowledge to specific problems, I'm ready to assist you!</div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="avatar ai">AI</div>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="input-group">
+                    <input type="text" id="messageInput" class="chat-input" placeholder="Type your message here..." autocomplete="off">
+                    <button id="sendButton" class="send-button">
+                        <span>Send</span>
+                        <span>➤</span>
+                    </button>
+                    <button id="clearButton" class="clear-button">Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const clearButton = document.getElementById('clearButton');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const historyList = document.getElementById('historyList');
+
+        // Store conversation sessions in localStorage
+        let conversationSessions = [];
+        let currentSessionId = null;
+
+        // Load conversations from localStorage on page load
+        function loadConversationsFromStorage() {
+            const stored = localStorage.getItem('chatbot_conversations');
+            if (stored) {
+                conversationSessions = JSON.parse(stored);
+                updateHistoryList();
+            }
+        }
+
+        // Save conversations to localStorage
+        function saveConversationsToStorage() {
+            localStorage.setItem('chatbot_conversations', JSON.stringify(conversationSessions));
+        }
+
+        function addMessage(content, isUser = false, timestamp = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = `avatar ${isUser ? 'user' : 'ai'}`;
+            avatar.textContent = isUser ? 'You' : 'AI';
+            
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            
+            // Create message header for AI messages to include speaker icon
+            if (!isUser) {
+                const messageHeader = document.createElement('div');
+                messageHeader.className = 'message-header';
+                
+                const speakerIcon = document.createElement('div');
+                speakerIcon.className = 'speaker-icon';
+                speakerIcon.innerHTML = '🔊';
+                speakerIcon.title = 'Listen to this message';
+                
+                // Add click event for text-to-speech
+                speakerIcon.addEventListener('click', () => {
+                    speakText(content, speakerIcon);
+                });
+                
+                messageHeader.appendChild(speakerIcon);
+                messageContent.appendChild(messageHeader);
+            }
+            
+            const messageText = document.createElement('div');
+            messageText.textContent = content;
+            messageContent.appendChild(messageText);
+            
+            const messageTime = document.createElement('div');
+            messageTime.className = 'message-time';
+            messageTime.textContent = timestamp || new Date().toLocaleTimeString();
+            
+            messageContent.appendChild(messageTime);
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function createNewSession() {
+            const sessionId = Date.now().toString();
+            const session = {
+                id: sessionId,
+                title: 'New Conversation',
+                messages: [],
+                timestamp: new Date().toISOString()
+            };
+            conversationSessions.unshift(session);
+            currentSessionId = sessionId;
+            updateHistoryList();
+            saveConversationsToStorage();
+            return sessionId;
+        }
+
+        function updateHistoryList() {
+            historyList.innerHTML = '';
+            
+            if (conversationSessions.length === 0) {
+                historyList.innerHTML = '<div class="no-history">No previous conversations</div>';
+                return;
+            }
+
+            conversationSessions.forEach(session => {
+                const historyItem = document.createElement('div');
+                historyItem.className = `history-item ${session.id === currentSessionId ? 'active' : ''}`;
+                
+                const title = session.title.length > 50 ? session.title.substring(0, 50) + '...' : session.title;
+                const timestamp = new Date(session.timestamp).toLocaleString();
+                
+                historyItem.innerHTML = `
+                    <div>${title}</div>
+                    <div class="timestamp">${timestamp}</div>
+                `;
+                
+                historyItem.addEventListener('click', () => {
+                    loadSession(session.id);
+                });
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        function loadSession(sessionId) {
+            const session = conversationSessions.find(s => s.id === sessionId);
+            if (!session) return;
+            
+            currentSessionId = sessionId;
+            
+            // Clear current chat
+            chatMessages.innerHTML = '';
+            
+            // Load session messages from localStorage
+            session.messages.forEach(msg => {
+                addMessage(msg.content, msg.isUser, msg.timestamp);
+            });
+            
+            updateHistoryList();
+        }
+
+        function updateSessionTitle(sessionId, title) {
+            const session = conversationSessions.find(s => s.id === sessionId);
+            if (session) {
+                session.title = title;
+                updateHistoryList();
+                saveConversationsToStorage();
+            }
+        }
+
+        function speakText(text, speakerIcon) {
+            // Check if speech synthesis is supported
+            if (!window.speechSynthesis) {
+                alert('Text-to-speech is not supported in your browser. Please try a modern browser like Chrome, Firefox, or Safari.');
+                return;
+            }
+            
+            // Stop any currently playing speech
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+            }
+            
+            // Create speech synthesis utterance
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // Configure speech settings
+            utterance.rate = 0.9; // Slightly slower than default
+            utterance.pitch = 1.0;
+            utterance.volume = 1.0;
+            
+            // Try to use a female voice if available
+            const voices = speechSynthesis.getVoices();
+            const femaleVoice = voices.find(voice => 
+                voice.name.includes('female') || 
+                voice.name.includes('Female') ||
+                voice.name.includes('Samantha') ||
+                voice.name.includes('Victoria')
+            );
+            
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+            }
+            
+            // Add visual feedback
+            speakerIcon.classList.add('playing');
+            
+            // Handle speech events
+            utterance.onstart = () => {
+                speakerIcon.innerHTML = '⏸️';
+                speakerIcon.title = 'Pause speech';
+            };
+            
+            utterance.onend = () => {
+                speakerIcon.classList.remove('playing');
+                speakerIcon.innerHTML = '🔊';
+                speakerIcon.title = 'Listen to this message';
+            };
+            
+            utterance.onerror = (event) => {
+                console.error('Speech synthesis error:', event);
+                speakerIcon.classList.remove('playing');
+                speakerIcon.innerHTML = '🔊';
+                speakerIcon.title = 'Listen to this message';
+            };
+            
+            // Start speaking
+            window.speechSynthesis.speak(utterance);
+            
+            // Add click handler to stop/pause speech
+            speakerIcon.onclick = () => {
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                    speakerIcon.classList.remove('playing');
+                    speakerIcon.innerHTML = '🔊';
+                    speakerIcon.title = 'Listen to this message';
+                } else {
+                    speakText(text, speakerIcon);
+                }
+            };
+        }
+
+        function showTyping() {
+            typingIndicator.style.display = 'flex';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.style.display = 'none';
+        }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Create new session if none exists
+            if (!currentSessionId) {
+                createNewSession();
+            }
+
+            // Add user message
+            addMessage(message, true);
+            
+            // Save to current session
+            const session = conversationSessions.find(s => s.id === currentSessionId);
+            if (session) {
+                session.messages.push({
+                    content: message,
+                    isUser: true,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                
+                // Update session title with first user message
+                if (session.messages.length === 1) {
+                    updateSessionTitle(currentSessionId, message);
+                }
+                
+                // Save to localStorage
+                saveConversationsToStorage();
+            }
+            
+            messageInput.value = '';
+            sendButton.disabled = true;
+
+            // Show typing indicator
+            showTyping();
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+
+                hideTyping();
+
+                if (response.ok) {
+                    addMessage(data.response, false, new Date(data.timestamp).toLocaleTimeString());
+                    
+                    // Save AI response to session
+                    if (session) {
+                        session.messages.push({
+                            content: data.response,
+                            isUser: false,
+                            timestamp: new Date(data.timestamp).toLocaleTimeString()
+                        });
+                        
+                        // Save to localStorage
+                        saveConversationsToStorage();
+                    }
+                } else {
+                    addMessage(`Error: ${data.error}`, false);
+                }
+            } catch (error) {
+                hideTyping();
+                addMessage(`Error: ${error.message}`, false);
+            } finally {
+                sendButton.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        function clearHistory() {
+            // Clear current session
+            currentSessionId = null;
+            conversationSessions = [];
+            
+            // Clear localStorage
+            localStorage.removeItem('chatbot_conversations');
+            
+            // Clear the chat messages and show welcome message
+            chatMessages.innerHTML = `
+                <div class="message ai">
+                    <div class="avatar ai">AI</div>
+                    <div class="message-content">
+                        <div class="message-header">
+                            <div class="speaker-icon" onclick="speakText('Hello! I\\'m your humanoid AI assistant. I\\'m here to help you with any questions you might have. Feel free to ask me anything - from general knowledge to specific problems, I\\'m ready to assist you!', this)" title="Listen to this message">🔊</div>
+                        </div>
+                        <div>Hello! I'm your humanoid AI assistant. I'm here to help you with any questions you might have. Feel free to ask me anything - from general knowledge to specific problems, I'm ready to assist you!</div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+            `;
+            
+            // Update history list
+            updateHistoryList();
+            
+            console.log('Chat history cleared successfully!');
+        }
+
+        // Event listeners
+        sendButton.addEventListener('click', sendMessage);
+        clearButton.addEventListener('click', clearHistory);
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        messageInput.addEventListener('input', () => {
+            sendButton.disabled = !messageInput.value.trim();
+        });
+
+        // Load conversations from localStorage when page loads
+        loadConversationsFromStorage();
+
+        // Focus on input when page loads
+        messageInput.focus();
+    </script>
+</body>
+</html>
