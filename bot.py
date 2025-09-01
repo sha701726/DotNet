@@ -83,6 +83,11 @@ def chat():
             result = search_supabase_documents(enrollment_no, password)
             return jsonify(result)
 
+        # Check if there's file analysis to include
+        file_context = ""
+        if data.get('has_file') and data.get('file_analysis'):
+            file_context = f"\n\nFile Analysis ({data.get('file_name', 'Document')}):\n{data.get('file_analysis', '')}"
+        
         # Default AI response for general AmLI questions
         context_prompt = f"""You are an AI assistant specifically for AmLI (ADAPTIVE MONITORING LAYERED INTELLIGENCE). 
 
@@ -92,7 +97,7 @@ Your role is to help users with AmLI-specific services including:
 - General information about AmLI services
 - Student and employee support
 
-Current user message: {user_message}
+Current user message: {user_message}{file_context}
 
 Guidelines:
 - Be specific to AmLI services and offerings
@@ -100,6 +105,8 @@ Guidelines:
 - If someone asks about certificates/offer letters, ask for their enrollment number
 - Be helpful, professional, and AmLI-focused
 - Provide clear next steps for any service requests
+- Keep responses concise and professional (under 100 words)
+- If a file is attached, reference the analysis in your response
 
 Assistant:"""
 
@@ -192,6 +199,131 @@ def download_document(enrollment_no):
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    """Handle file uploads and process them with Gemini AI"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+        
+        file = request.files['file']
+        file_type = request.form.get('type', 'document')
+        user_message = request.form.get('message', '')
+        
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+        
+        if file:
+            # Read file content
+            file_content = file.read()
+            
+            # Check if it's an image file
+            if is_image_file(file.filename):
+                # Use Gemini Vision API for images
+                analysis = analyze_image_with_gemini(file_content, file.filename, user_message)
+            else:
+                # Process as text document
+                text_content = extract_text_from_file(file_content, file.filename, file_type)
+                analysis = analyze_document_with_gemini(text_content, file.filename, user_message)
+            
+            return jsonify({
+                'message': 'File processed successfully',
+                'analysis': analysis,
+                'filename': file.filename,
+                'type': file_type
+            })
+            
+    except Exception as e:
+        return jsonify({'error': f'Error processing file: {str(e)}'}), 500
+
+
+
+def analyze_document_with_gemini(text_content, filename, user_message):
+    """Analyze document text using Gemini API with professional, precise responses"""
+    try:
+        prompt = f"""Analyze this document and provide a professional, concise summary.
+        
+        Document: {filename}
+        User Query: {user_message}
+        
+        Provide a brief, precise analysis covering:
+        1. Document type and key content (2-3 sentences)
+        2. Relevant information for AmLI services (1-2 sentences)
+        3. Specific recommendations or next steps (1 sentence)
+        
+        Keep response under 100 words. Be professional and actionable.
+        
+        Document content:
+        {text_content[:2000]}"""
+        
+        response = model.generate_content(prompt)
+        return response.text
+        
+    except Exception as e:
+        return f"Document analysis error: {str(e)}"
+
+def is_image_file(filename):
+    """Check if file is an image based on extension"""
+    image_extensions = {'.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp', '.svg'}
+    file_ext = os.path.splitext(filename.lower())[1]
+    return file_ext in image_extensions
+
+def analyze_image_with_gemini(file_content, filename, user_message):
+    """Analyze image using Gemini Vision API"""
+    try:
+        # Create image part for Gemini Vision
+        image_part = {
+            "mime_type": get_mime_type(filename),
+            "data": file_content
+        }
+        
+        prompt = f"""Analyze this image and provide a professional, concise description.
+        
+        Image: {filename}
+        User Query: {user_message}
+        
+        Provide a brief, precise analysis covering:
+        1. What you see in the image (2-3 sentences)
+        2. Any relevant text or information visible
+        3. How this relates to AmLI services (1 sentence)
+        4. Specific recommendations based on the image (1 sentence)
+        
+        Keep response under 100 words. Be professional and actionable.
+        Focus on the user's specific question about the image."""
+        
+        response = model.generate_content([prompt, image_part])
+        return response.text
+        
+    except Exception as e:
+        return f"Image analysis error: {str(e)}"
+
+def get_mime_type(filename):
+    """Get MIME type based on file extension"""
+    ext = os.path.splitext(filename.lower())[1]
+    mime_types = {
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+        '.gif': 'image/gif',
+        '.bmp': 'image/bmp',
+        '.tiff': 'image/tiff',
+        '.webp': 'image/webp',
+        '.svg': 'image/svg+xml'
+    }
+    return mime_types.get(ext, 'image/jpeg')
+
+def extract_text_from_file(file_content, filename, file_type):
+    """Extract text content from various file types"""
+    try:
+        # Try to decode as text first
+        try:
+            return file_content.decode('utf-8', errors='ignore')
+        except UnicodeDecodeError:
+            # If it's a binary file, try to extract basic info
+            return f"Binary file: {filename} - Size: {len(file_content)} bytes"
+    except Exception as e:
+        return f"File content extraction error: {str(e)}"
 
 if __name__ == '__main__':
     os.makedirs('templates', exist_ok=True)

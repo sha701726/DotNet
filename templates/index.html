@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AmLI - Adaptive Monitoring Layered Intelligence</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -15,42 +16,211 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #000000 0%, #ffffff 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            overflow-x: hidden;
         }
 
+        /* Mobile First Design */
         .main-container {
-            display: flex;
             width: 100%;
-            max-width: 1200px;
-            height: 600px;
-            gap: 20px;
+            min-height: 100vh;
+            position: relative;
         }
 
-        .history-sidebar {
+        /* Hamburger Menu Button */
+        .hamburger-menu {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
             background: rgba(20, 20, 20, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .hamburger-menu:hover {
+            background: rgba(40, 40, 40, 0.95);
+            transform: scale(1.05);
+        }
+
+        .hamburger-icon {
+            width: 20px;
+            height: 2px;
+            background: white;
+            margin: 4px 0;
+            transition: 0.3s;
+        }
+
+        .hamburger-menu.active .hamburger-icon:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .hamburger-menu.active .hamburger-icon:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active .hamburger-icon:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        /* Sliding Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
             width: 300px;
+            height: 100vh;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid #333;
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            border: 1px solid #333;
         }
 
-        .chat-container {
-            background: rgba(20, 20, 20, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        .sidebar.active {
+            left: 0;
+        }
+
+        /* Sidebar Header */
+        .sidebar-header {
+            background: #1a1a1a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            margin-top: 60px;
+        }
+
+        .sidebar-header h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* History Section */
+        .history-section {
             flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .history-list {
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            gap: 10px;
+        }
+
+        .history-item {
+            background: #2a2a2a;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .history-item:hover {
+            background: #3a3a3a;
+            transform: translateY(-1px);
+        }
+
+        .history-item.active {
+            background: #ffffff;
+            color: #000000;
+        }
+
+        .history-item .timestamp {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .no-history {
+            text-align: center;
+            color: #888;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        /* Quick Actions Section */
+        .quick-actions-section {
+            padding: 20px;
+            border-top: 1px solid #333;
+            background: #1a1a1a;
+        }
+
+        .quick-actions-section h4 {
+            color: white;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .quick-action-link {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .quick-action-link:hover {
+            background: #3a3a3a;
+            transform: translateY(-1px);
+            color: #ffffff;
+        }
+
+        /* Clear Button */
+        .clear-section {
+            padding: 20px;
+            border-top: 1px solid #333;
+            background: #1a1a1a;
+        }
+
+        .clear-btn {
+            width: 100%;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: #ff5252;
+            transform: translateY(-1px);
+        }
+
+        /* Main Chat Area */
+        .chat-container {
+            width: 100%;
+            min-height: 100vh;
+            background: rgba(20, 20, 20, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
         }
 
         .chat-header {
@@ -60,6 +230,7 @@
             text-align: center;
             position: relative;
             border-bottom: 1px solid #333;
+            margin-top: 60px;
         }
 
         .chat-header h1 {
@@ -90,33 +261,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        .quick-actions {
-            background: #1a1a1a;
-            padding: 15px;
-            border-bottom: 1px solid #333;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .quick-action-btn {
-            background: #ffffff;
-            color: #000000;
-            border: 1px solid #444;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-
-        .quick-action-btn:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
-        }
-
         .chat-messages {
             flex: 1;
             padding: 20px;
@@ -145,22 +289,17 @@
             background: #555;
         }
 
-        .history-list::-webkit-scrollbar {
-            width: 8px;
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .history-list::-webkit-scrollbar-track {
+        .sidebar::-webkit-scrollbar-track {
             background: #f1f1f1;
-            border-radius: 10px;
         }
 
-        .history-list::-webkit-scrollbar-thumb {
+        .sidebar::-webkit-scrollbar-thumb {
             background: #888;
-            border-radius: 10px;
-        }
-
-        .history-list::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            border-radius: 3px;
         }
 
         .message {
@@ -192,7 +331,7 @@
         }
 
         .avatar.user {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #000000 0%, #ffffff 100%);
         }
 
         .avatar.ai {
@@ -202,7 +341,7 @@
         }
 
         .message-content {
-            max-width: 70%;
+            max-width: 80%;
             padding: 15px 20px;
             border-radius: 20px;
             word-wrap: break-word;
@@ -265,16 +404,8 @@
         .message-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-
-        .message.ai .message-header {
             justify-content: flex-start;
-        }
-
-        .message.user .message-header {
-            justify-content: flex-end;
+            margin-bottom: 5px;
         }
 
         .action-buttons {
@@ -320,49 +451,188 @@
 
         .input-group {
             display: flex;
-            gap: 10px;
             align-items: center;
+            background: #ffffff;
+            border-radius: 25px;
+            padding: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .chat-input {
             flex: 1;
             padding: 15px 20px;
-            border: 2px solid #444;
-            border-radius: 25px;
+            border: none;
+            border-radius: 20px;
             font-size: 16px;
             outline: none;
-            transition: border-color 0.3s ease;
-            background: #2a2a2a;
-            color: #ffffff;
-        }
-
-        .chat-input:focus {
-            border-color: #ffffff;
+            background: transparent;
+            color: #000000;
         }
 
         .chat-input::placeholder {
+            color: #666;
+        }
+
+        .plus-icon {
+            width: 40px;
+            height: 40px;
+            background: #000000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            margin-left: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .plus-icon:hover {
+            background: #333;
+            transform: scale(1.05);
+        }
+
+        /* Upload Menu */
+        .upload-menu {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 10px;
+            display: none;
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .upload-menu.active {
+            display: block;
+        }
+
+        .upload-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .upload-option:hover {
+            background: #f5f5f5;
+            transform: translateX(5px);
+        }
+
+        .upload-option-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* File Upload Input */
+        .file-upload-input {
+            display: none;
+        }
+
+        /* Uploaded File Display */
+        .uploaded-file {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .file-icon {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
             color: #888;
+            font-size: 12px;
+        }
+
+        .remove-file {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .remove-file:hover {
+            background: #ff5252;
+        }
+
+        /* Processing Indicator */
+        .processing-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 20px;
+            background: #2a2a2a;
+            border-radius: 10px;
+            border: 1px solid #444;
+            margin: 10px 0;
+            color: white;
+        }
+
+        .processing-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #444;
+            border-top: 2px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .send-button {
-            background: #ffffff;
-            color: #000000;
-            border: 1px solid #444;
-            padding: 18px 30px;
-            border-radius: 25px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 2px solid #000000;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 18px;
-            font-weight: 600;
-            transition: transform 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
-            min-width: 120px;
+            justify-content: center;
+            margin-right: 5px;
+            transition: all 0.3s ease;
         }
 
         .send-button:hover {
-            transform: translateY(-2px);
-            background: #e0e0e0;
+            background: #333;
+            transform: scale(1.05);
         }
 
         .send-button:disabled {
@@ -370,33 +640,8 @@
             cursor: not-allowed;
             transform: none;
             background: #666;
-            color: #333;
         }
 
-        .clear-button {
-            background: #ffffff;
-            color: #000000;
-            border: 1px solid #444;
-            padding: 18px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 18px;
-            margin-left: 10px;
-            transition: background 0.3s ease;
-            min-width: 120px;
-        }
-
-        .clear-button:hover {
-            background: #e0e0e0;
-        }
-
-        .clear-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            background: #666;
-            color: #333;
-        }
 
         .typing-indicator {
             display: none;
@@ -428,72 +673,6 @@
         @keyframes typing {
             0%, 80%, 100% { transform: scale(0); }
             40% { transform: scale(1); }
-        }
-
-        .error-message {
-            background: #2a2a2a;
-            color: #ff6b6b;
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin: 10px 0;
-            border: 1px solid #444;
-        }
-
-        .history-header {
-            background: #1a1a1a;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #333;
-        }
-
-        .history-list {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .history-item {
-            background: #2a2a2a;
-            color: #ffffff;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #444;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .history-item:hover {
-            background: #3a3a3a;
-            transform: translateY(-2px);
-        }
-
-        .history-item.active {
-            background: #ffffff;
-            color: #000000;
-            border-color: #ffffff;
-        }
-
-        .history-item .timestamp {
-            font-size: 12px;
-            color: #888;
-            margin-top: 5px;
-        }
-
-        .history-item.active .timestamp {
-            color: #666;
-        }
-
-        .no-history {
-            text-align: center;
-            color: #888;
-            padding: 40px 20px;
-            font-style: italic;
         }
 
         .enrollment-form {
@@ -528,145 +707,122 @@
             background: #45a049;
         }
 
-        @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-                height: 100vh;
-                max-width: 100%;
-                gap: 10px;
-                padding: 10px;
-            }
-
-            .history-sidebar {
-                width: 100%;
-                height: 180px;
-                border-radius: 15px;
-            }
-
-            .chat-container {
-                height: calc(100vh - 200px);
-                border-radius: 15px;
-                margin: 0;
-            }
-            
-            .message-content {
-                max-width: 90%;
-            }
-
-            .quick-actions {
-                flex-direction: column;
-                gap: 8px;
-                padding: 12px;
-            }
-
-            .quick-action-btn {
-                text-align: center;
-                padding: 10px 16px;
-                font-size: 14px;
-            }
-
-            .chat-header {
-                padding: 15px;
-            }
-
-            .chat-header h1 {
-                font-size: 20px;
-            }
-
-            .chat-header p {
-                font-size: 12px;
-            }
-
-            .chat-messages {
-                padding: 15px;
-            }
-
-            .chat-input-container {
-                padding: 15px;
-            }
-
-            .input-group {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .chat-input {
-                width: 100%;
-                font-size: 16px;
-            }
-
-            .send-button, .clear-button {
-                width: 100%;
-                justify-content: center;
-                padding: 15px;
-                font-size: 16px;
-            }
-
-            .avatar {
-                width: 35px;
-                height: 35px;
-                font-size: 12px;
-            }
-
-            .message-content {
-                padding: 12px 16px;
-                font-size: 14px;
-            }
+        /* Overlay for sidebar */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
         }
 
-        @media (max-width: 480px) {
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Desktop styles - Original layout */
+        @media (min-width: 768px) {
+            .hamburger-menu {
+                display: none;
+            }
+            
+            .sidebar-overlay {
+                display: none;
+            }
+            
+            .sidebar {
+                left: 0;
+                position: relative;
+                width: 300px;
+                height: 100vh;
+                flex-shrink: 0;
+                border-radius: 20px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+                margin: 20px 0 20px 20px;
+            }
+            
             .main-container {
-                padding: 5px;
-                gap: 8px;
+                display: flex;
+                max-width: 1200px;
+                margin: 0 auto;
+                height: 100vh;
+                gap: 20px;
+                padding: 20px;
             }
-
-            .history-sidebar {
-                height: 150px;
-            }
-
+            
             .chat-container {
-                height: calc(100vh - 170px);
+                flex: 1;
+                height: 100vh;
+                border-radius: 20px;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+                margin: 20px 20px 20px 0;
             }
-
-            .quick-action-btn {
-                font-size: 12px;
-                padding: 8px 12px;
+            
+            .chat-header {
+                margin-top: 0;
+                border-radius: 20px 20px 0 0;
             }
-
-            .chat-header h1 {
-                font-size: 18px;
-            }
-
-            .chat-header p {
-                font-size: 11px;
+            
+            .sidebar-header {
+                margin-top: 0;
+                border-radius: 20px 20px 0 0;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Hamburger Menu Button -->
+    <div class="hamburger-menu" onclick="toggleSidebar()">
+        <div class="hamburger-icon"></div>
+        <div class="hamburger-icon"></div>
+        <div class="hamburger-icon"></div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <div class="main-container">
-        <div class="history-sidebar">
-            <div class="history-header">
-                <h3>AmLI Services</h3>
-                <p>Your conversation history</p>
+        <!-- Left Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <h4>Your conversation history</h4>
             </div>
-            <div class="history-list" id="historyList">
-                <div class="no-history">No previous conversations</div>
+            
+            <!-- History Section -->
+            <div class="history-section">
+                <div class="history-list" id="historyList">
+                    <div class="no-history">No previous conversations</div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions Section -->
+            <div class="quick-actions-section">
+                <h4>Quick Actions</h4>
+                <a href="#" class="quick-action-link" onclick="quickAction('job')">Apply for Job/Internship</a>
+                <a href="#" class="quick-action-link" onclick="quickAction('certificate')">Search Certificate</a>
+                <a href="#" class="quick-action-link" onclick="quickAction('offer')">Find Offer Letter</a>
+                <a href="#" class="quick-action-link" onclick="quickAction('info')">AmLI Information</a>
+            </div>
+            
+            <!-- Clear Button Section -->
+            <div class="clear-section">
+                <button class="clear-btn" onclick="clearHistory()">Clear History</button>
             </div>
         </div>
         
+        <!-- Main Chat Area -->
         <div class="chat-container">
             <div class="chat-header">
                 <div class="status-indicator"></div>
                 <h1>AmLI Assistant</h1>
                 <p>Adaptive Monitoring Layered Intelligence - How can I help you today?</p>
-            </div>
-            
-            <div class="quick-actions">
-                <button class="quick-action-btn" onclick="quickAction('job')">Apply for Job/Internship</button>
-                <button class="quick-action-btn" onclick="quickAction('certificate')">Search Certificate</button>
-                <button class="quick-action-btn" onclick="quickAction('offer')">Find Offer Letter</button>
-                <button class="quick-action-btn" onclick="quickAction('info')">AmLI Information</button>
             </div>
             
             <div class="chat-messages" id="chatMessages">
@@ -693,12 +849,40 @@
             
             <div class="chat-input-container">
                 <div class="input-group">
-                    <input type="text" id="messageInput" class="chat-input" placeholder="Ask about AmLI services, apply for jobs, or search certificates..." autocomplete="off">
+                    <div class="plus-icon" onclick="toggleUploadMenu()"><i class="fa-solid fa-file-arrow-up"></i></div>
+                    
+                    <!-- Upload Menu -->
+                    <div class="upload-menu" id="uploadMenu">
+                        <div class="upload-option" onclick="triggerFileUpload('document')">
+                            <span><i class="fas fa-file-upload"></i> Upload Document</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden File Inputs -->
+                    <input type="file" id="documentInput" class="file-upload-input" accept="*/*" onchange="handleFileUpload(this, 'document')">
+                    
+                    <input type="text" id="messageInput" class="chat-input" placeholder="Ask anything" autocomplete="off">
                     <button id="sendButton" class="send-button">
-                        <span>Send</span>
-                        <span>➤</span>
+                        <div><i class="fa-regular fa-paper-plane"></i></div>
                     </button>
-                    <button id="clearButton" class="clear-button">Clear</button>
+                </div>
+                
+                <!-- Uploaded File Display -->
+                <div id="uploadedFileDisplay" style="display: none;">
+                    <div class="uploaded-file">
+                        <div class="file-icon" id="fileIcon"><i class="fas fa-file-upload"></i></div>
+                        <div class="file-info">
+                            <div class="file-name" id="fileName">Document Name</div>
+                            <div class="file-size" id="fileSize">0 KB</div>
+                        </div>
+                        <button class="remove-file" onclick="removeUploadedFile()">Remove</button>
+                    </div>
+                </div>
+                
+                <!-- Processing Indicator -->
+                <div class="processing-indicator" id="processingIndicator">
+                    <div class="processing-spinner"></div>
+                    <span>Processing your file...</span>
                 </div>
             </div>
         </div>
@@ -708,15 +892,33 @@
         const chatMessages = document.getElementById('chatMessages');
         const messageInput = document.getElementById('messageInput');
         const sendButton = document.getElementById('sendButton');
-        const clearButton = document.getElementById('clearButton');
         const typingIndicator = document.getElementById('typingIndicator');
         const historyList = document.getElementById('historyList');
+        const sidebar = document.getElementById('sidebar');
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        const sidebarOverlay = document.querySelector('.sidebar-overlay');
 
         // Store conversation sessions in localStorage
         let conversationSessions = [];
         let currentSessionId = null;
         let currentEnrollmentNo = null;
         let waitingForPassword = false;
+
+        // Toggle sidebar function
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            hamburgerMenu.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !hamburgerMenu.contains(e.target)) {
+                sidebar.classList.remove('active');
+                hamburgerMenu.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            }
+        });
 
         // Load conversations from localStorage on page load
         function loadConversationsFromStorage() {
@@ -757,6 +959,11 @@
             
             messageInput.value = message;
             sendMessage(intent);
+            
+            // Close sidebar on mobile after action
+            if (window.innerWidth < 768) {
+                toggleSidebar();
+            }
         }
 
         function addMessage(content, isUser = false, timestamp = null, messageType = 'general', extraData = null) {
@@ -986,7 +1193,7 @@
             
             // Handle speech events
             utterance.onstart = () => {
-                speakerIcon.innerHTML = '⏸️';
+                speakerIcon.innerHTML = '⏸';
                 speakerIcon.title = 'Pause speech';
             };
             
@@ -1068,6 +1275,13 @@
             try {
                 let requestBody = { message: message || `Action: ${intent}` };
                 
+                // Check if there's an uploaded file to process
+                if (currentUploadedFile) {
+                    requestBody.has_file = true;
+                    requestBody.file_name = currentUploadedFile.name;
+                    requestBody.file_type = currentUploadedFile.type;
+                }
+                
                 if (intent === 'certificate_search' && enrollmentNo) {
                     requestBody.intent = 'certificate_search';
                     requestBody.enrollment_no = enrollmentNo;
@@ -1077,6 +1291,24 @@
                     requestBody.password = password;
                 } else if (intent === 'job_application') {
                     requestBody.intent = 'job_application';
+                }
+
+                // If there's a file, upload it first
+                if (currentUploadedFile) {
+                    const formData = new FormData();
+                    formData.append('file', currentUploadedFile.file);
+                    formData.append('type', 'document');
+                    formData.append('message', message || `Action: ${intent}`);
+
+                    const uploadResponse = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (uploadResponse.ok) {
+                        const uploadResult = await uploadResponse.json();
+                        requestBody.file_analysis = uploadResult.analysis;
+                    }
                 }
 
                 const response = await fetch('/chat', {
@@ -1151,7 +1383,6 @@
 
         // Event listeners
         sendButton.addEventListener('click', () => sendMessage());
-        clearButton.addEventListener('click', clearHistory);
 
         messageInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -1166,6 +1397,99 @@
 
         // Load conversations from localStorage when page loads
         loadConversationsFromStorage();
+
+        // File upload variables
+        let currentUploadedFile = null;
+        let uploadMenuOpen = false;
+
+        // Toggle upload menu
+        function toggleUploadMenu() {
+            uploadMenuOpen = !uploadMenuOpen;
+            const uploadMenu = document.getElementById('uploadMenu');
+            uploadMenu.classList.toggle('active', uploadMenuOpen);
+        }
+
+        // Close upload menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.plus-icon') && !e.target.closest('.upload-menu')) {
+                uploadMenuOpen = false;
+                document.getElementById('uploadMenu').classList.remove('active');
+            }
+        });
+
+        // Trigger file upload
+        function triggerFileUpload(type) {
+            document.getElementById('documentInput').click();
+            
+            // Close menu after selection
+            uploadMenuOpen = false;
+            document.getElementById('uploadMenu').classList.remove('active');
+        }
+
+        // Handle file upload
+        function handleFileUpload(input, type) {
+            const file = input.files[0];
+            if (!file) return;
+
+            // Validate file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size must be less than 10MB');
+                return;
+            }
+
+            // Store file info
+            currentUploadedFile = {
+                file: file,
+                type: type,
+                name: file.name,
+                size: file.size
+            };
+
+            // Display file info only - don't process yet
+            displayUploadedFile(file, type);
+        }
+
+        // Display uploaded file information
+        function displayUploadedFile(file, type) {
+            const display = document.getElementById('uploadedFileDisplay');
+            const fileIcon = document.getElementById('fileIcon');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+
+            // Check if it's an image file
+            const isImage = /\.(jpg|jpeg|png|gif|bmp|tiff|webp|svg)$/i.test(file.name);
+            
+            // Set appropriate icon
+            if (isImage) {
+                fileIcon.textContent = '📁';
+            } else {
+                fileIcon.textContent = '📁';
+            }
+
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            display.style.display = 'block';
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+
+
+        // Remove uploaded file
+        function removeUploadedFile() {
+            currentUploadedFile = null;
+            document.getElementById('uploadedFileDisplay').style.display = 'none';
+            
+            // Clear file input
+            document.getElementById('documentInput').value = '';
+        }
 
         // Focus on input when page loads
         messageInput.focus();

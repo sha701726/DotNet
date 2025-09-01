@@ -35,15 +35,15 @@ SUPABASE_ANON_KEY=your_supabase_anon_key_here
 
 ### 2. Install Dependencies
 
-```bash
-pip install -r requirements.txt
-```
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ### 3. Run the Application
 
-```bash
-python bot.py
-```
+   ```bash
+   python bot.py
+   ```
 
 The application will be available at `http://localhost:5000`
 
