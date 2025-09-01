@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Humanoid AI Assistant</title>
+    <title>AmLI - Adaptive Monitoring Layered Intelligence</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -54,7 +54,7 @@
         }
 
         .chat-header {
-            background: #1a1a1a;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 20px;
             text-align: center;
@@ -88,6 +88,33 @@
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.2); opacity: 0.7; }
             100% { transform: scale(1); opacity: 1; }
+        }
+
+        .quick-actions {
+            background: #1a1a1a;
+            padding: 15px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #444;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .quick-action-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
         }
 
         .chat-messages {
@@ -213,6 +240,41 @@
             justify-content: flex-end;
         }
 
+        .action-buttons {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: #ffffff;
+            color: #000000;
+            border: 1px solid #444;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .download-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .download-btn:hover {
+            background: #45a049;
+        }
+
         .chat-input-container {
             padding: 20px;
             background: #1a1a1a;
@@ -281,7 +343,7 @@
             padding: 18px 30px;
             border-radius: 25px;
             cursor: pointer;
-	        font-weight: 600;
+            font-weight: 600;
             font-size: 18px;
             margin-left: 10px;
             transition: background 0.3s ease;
@@ -397,6 +459,38 @@
             font-style: italic;
         }
 
+        .enrollment-form {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 1px solid #444;
+        }
+
+        .enrollment-form input {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-right: 10px;
+            width: 120px;
+        }
+
+        .enrollment-form button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .enrollment-form button:hover {
+            background: #45a049;
+        }
+
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -419,6 +513,14 @@
             .message-content {
                 max-width: 85%;
             }
+
+            .quick-actions {
+                flex-direction: column;
+            }
+
+            .quick-action-btn {
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -426,8 +528,8 @@
     <div class="main-container">
         <div class="history-sidebar">
             <div class="history-header">
-                <h3>Chat History</h3>
-                <p>Previous conversations</p>
+                <h3>AmLI Services</h3>
+                <p>Your conversation history</p>
             </div>
             <div class="history-list" id="historyList">
                 <div class="no-history">No previous conversations</div>
@@ -437,7 +539,15 @@
         <div class="chat-container">
             <div class="chat-header">
                 <div class="status-indicator"></div>
-                <p>Ask me anything! I'm here to help you with any questions.</p>
+                <h1>AmLI Assistant</h1>
+                <p>Adaptive Monitoring Layered Intelligence - How can I help you today?</p>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="quick-action-btn" onclick="quickAction('job')">Apply for Job/Internship</button>
+                <button class="quick-action-btn" onclick="quickAction('certificate')">Search Certificate</button>
+                <button class="quick-action-btn" onclick="quickAction('offer')">Find Offer Letter</button>
+                <button class="quick-action-btn" onclick="quickAction('info')">AmLI Information</button>
             </div>
             
             <div class="chat-messages" id="chatMessages">
@@ -445,9 +555,9 @@
                     <div class="avatar ai">AI</div>
                     <div class="message-content">
                         <div class="message-header">
-                            <div class="speaker-icon" onclick="speakText('Hello! I\'m your humanoid AI assistant. I\'m here to help you with any questions you might have. Feel free to ask me anything - from general knowledge to specific problems, I\'m ready to assist you!', this)" title="Listen to this message">🔊</div>
+                            <div class="speaker-icon" onclick="speakText('Welcome to AmLI - Adaptive Monitoring Layered Intelligence! I\'m here to help you with job applications, certificate searches, offer letters, and any other AmLI services. How can I assist you today?', this)" title="Listen to this message">🔊</div>
                         </div>
-                        <div>Hello! I'm your humanoid AI assistant. I'm here to help you with any questions you might have. Feel free to ask me anything - from general knowledge to specific problems, I'm ready to assist you!</div>
+                        <div>Welcome to AmLI - Adaptive Monitoring Layered Intelligence! I'm here to help you with job applications, certificate searches, offer letters, and any other AmLI services. How can I assist you today?</div>
                         <div class="message-time">Just now</div>
                     </div>
                 </div>
@@ -464,7 +574,7 @@
             
             <div class="chat-input-container">
                 <div class="input-group">
-                    <input type="text" id="messageInput" class="chat-input" placeholder="Type your message here..." autocomplete="off">
+                    <input type="text" id="messageInput" class="chat-input" placeholder="Ask about AmLI services, apply for jobs, or search certificates..." autocomplete="off">
                     <button id="sendButton" class="send-button">
                         <span>Send</span>
                         <span>➤</span>
@@ -486,10 +596,12 @@
         // Store conversation sessions in localStorage
         let conversationSessions = [];
         let currentSessionId = null;
+        let currentEnrollmentNo = null;
+        let waitingForPassword = false;
 
         // Load conversations from localStorage on page load
         function loadConversationsFromStorage() {
-            const stored = localStorage.getItem('chatbot_conversations');
+            const stored = localStorage.getItem('amli_conversations');
             if (stored) {
                 conversationSessions = JSON.parse(stored);
                 updateHistoryList();
@@ -498,10 +610,37 @@
 
         // Save conversations to localStorage
         function saveConversationsToStorage() {
-            localStorage.setItem('chatbot_conversations', JSON.stringify(conversationSessions));
+            localStorage.setItem('amli_conversations', JSON.stringify(conversationSessions));
         }
 
-        function addMessage(content, isUser = false, timestamp = null) {
+        function quickAction(action) {
+            let message = '';
+            let intent = '';
+            
+            switch(action) {
+                case 'job':
+                    message = 'I want to apply for a job or internship at AmLI';
+                    intent = 'job_application';
+                    break;
+                case 'certificate':
+                    message = 'I want to search for my certificate';
+                    intent = 'certificate_search';
+                    break;
+                case 'offer':
+                    message = 'I want to find my offer letter';
+                    intent = 'certificate_search';
+                    break;
+                case 'info':
+                    message = 'Tell me more about AmLI services';
+                    intent = 'general';
+                    break;
+            }
+            
+            messageInput.value = message;
+            sendMessage(intent);
+        }
+
+        function addMessage(content, isUser = false, timestamp = null, messageType = 'general', extraData = null) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
             
@@ -535,6 +674,57 @@
             messageText.textContent = content;
             messageContent.appendChild(messageText);
             
+            // Add action buttons based on message type
+            if (!isUser && extraData) {
+                if (messageType === 'job_form' && extraData.form_url) {
+                    const actionButtons = document.createElement('div');
+                    actionButtons.className = 'action-buttons';
+                    
+                    const applyBtn = document.createElement('a');
+                    applyBtn.href = extraData.form_url;
+                    applyBtn.target = '_blank';
+                    applyBtn.className = 'action-btn';
+                    applyBtn.textContent = '📝 Apply Now';
+                    
+                    actionButtons.appendChild(applyBtn);
+                    messageContent.appendChild(actionButtons);
+                }
+                
+                if (messageType === 'request_enrollment') {
+                    const enrollmentForm = document.createElement('div');
+                    enrollmentForm.className = 'enrollment-form';
+                    enrollmentForm.innerHTML = `
+                        <input type="text" id="enrollmentInput" placeholder="6-digit Enrollment No" maxlength="6" pattern="[0-9]{6}">
+                        <button onclick="submitEnrollment()">Search</button>
+                    `;
+                    messageContent.appendChild(enrollmentForm);
+                }
+                
+                if (messageType === 'request_password') {
+                    const passwordForm = document.createElement('div');
+                    passwordForm.className = 'enrollment-form';
+                    passwordForm.innerHTML = `
+                        <input type="password" id="passwordInput" placeholder="6-digit Password" maxlength="6" pattern="[0-9]{6}">
+                        <button onclick="submitPassword()">Verify</button>
+                    `;
+                    messageContent.appendChild(passwordForm);
+                }
+                
+                if (messageType === 'document_found' && extraData.download_url) {
+                    const actionButtons = document.createElement('div');
+                    actionButtons.className = 'action-buttons';
+                    
+                    const downloadBtn = document.createElement('a');
+                    downloadBtn.href = extraData.download_url;
+                    downloadBtn.className = 'action-btn download-btn';
+                    downloadBtn.textContent = '📥 Download Document';
+                    downloadBtn.target = '_blank';
+                    
+                    actionButtons.appendChild(downloadBtn);
+                    messageContent.appendChild(actionButtons);
+                }
+            }
+            
             const messageTime = document.createElement('div');
             messageTime.className = 'message-time';
             messageTime.textContent = timestamp || new Date().toLocaleTimeString();
@@ -547,11 +737,34 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
+        function submitEnrollment() {
+            const enrollmentInput = document.getElementById('enrollmentInput');
+            const enrollmentNo = enrollmentInput.value.trim();
+            
+            if (enrollmentNo.length === 6 && /^\d{6}$/.test(enrollmentNo)) {
+                currentEnrollmentNo = enrollmentNo;
+                sendMessage('certificate_search', enrollmentNo);
+            } else {
+                alert('Please enter a valid 6-digit enrollment number');
+            }
+        }
+
+        function submitPassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const password = passwordInput.value.trim();
+            
+            if (password.length === 6 && /^\d{6}$/.test(password)) {
+                sendMessage('verify_password', currentEnrollmentNo, password);
+            } else {
+                alert('Please enter a valid 6-digit password');
+            }
+        }
+
         function createNewSession() {
             const sessionId = Date.now().toString();
             const session = {
                 id: sessionId,
-                title: 'New Conversation',
+                title: 'New AmLI Conversation',
                 messages: [],
                 timestamp: new Date().toISOString()
             };
@@ -601,7 +814,7 @@
             
             // Load session messages from localStorage
             session.messages.forEach(msg => {
-                addMessage(msg.content, msg.isUser, msg.timestamp);
+                addMessage(msg.content, msg.isUser, msg.timestamp, msg.type, msg.extraData);
             });
             
             updateHistoryList();
@@ -696,9 +909,9 @@
             typingIndicator.style.display = 'none';
         }
 
-        async function sendMessage() {
+        async function sendMessage(intent = '', enrollmentNo = '', password = '') {
             const message = messageInput.value.trim();
-            if (!message) return;
+            if (!message && !intent) return;
 
             // Create new session if none exists
             if (!currentSessionId) {
@@ -706,20 +919,21 @@
             }
 
             // Add user message
-            addMessage(message, true);
+            addMessage(message || `Action: ${intent}`, true);
             
             // Save to current session
             const session = conversationSessions.find(s => s.id === currentSessionId);
             if (session) {
                 session.messages.push({
-                    content: message,
+                    content: message || `Action: ${intent}`,
                     isUser: true,
-                    timestamp: new Date().toLocaleTimeString()
+                    timestamp: new Date().toLocaleTimeString(),
+                    type: 'user_message'
                 });
                 
                 // Update session title with first user message
                 if (session.messages.length === 1) {
-                    updateSessionTitle(currentSessionId, message);
+                    updateSessionTitle(currentSessionId, message || `AmLI ${intent}`);
                 }
                 
                 // Save to localStorage
@@ -733,14 +947,25 @@
             showTyping();
 
             try {
+                let requestBody = { message: message || `Action: ${intent}` };
+                
+                if (intent === 'certificate_search' && enrollmentNo) {
+                    requestBody.intent = 'certificate_search';
+                    requestBody.enrollment_no = enrollmentNo;
+                } else if (intent === 'verify_password' && enrollmentNo && password) {
+                    requestBody.intent = 'verify_password';
+                    requestBody.enrollment_no = enrollmentNo;
+                    requestBody.password = password;
+                } else if (intent === 'job_application') {
+                    requestBody.intent = 'job_application';
+                }
+
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ 
-                        message: message
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
                 const data = await response.json();
@@ -748,14 +973,16 @@
                 hideTyping();
 
                 if (response.ok) {
-                    addMessage(data.response, false, new Date(data.timestamp).toLocaleTimeString());
+                    addMessage(data.response, false, new Date(data.timestamp).toLocaleTimeString(), data.type, data);
                     
                     // Save AI response to session
                     if (session) {
                         session.messages.push({
                             content: data.response,
                             isUser: false,
-                            timestamp: new Date(data.timestamp).toLocaleTimeString()
+                            timestamp: new Date(data.timestamp).toLocaleTimeString(),
+                            type: data.type,
+                            extraData: data
                         });
                         
                         // Save to localStorage
@@ -777,9 +1004,11 @@
             // Clear current session
             currentSessionId = null;
             conversationSessions = [];
+            currentEnrollmentNo = null;
+            waitingForPassword = false;
             
             // Clear localStorage
-            localStorage.removeItem('chatbot_conversations');
+            localStorage.removeItem('amli_conversations');
             
             // Clear the chat messages and show welcome message
             chatMessages.innerHTML = `
@@ -787,9 +1016,9 @@
                     <div class="avatar ai">AI</div>
                     <div class="message-content">
                         <div class="message-header">
-                            <div class="speaker-icon" onclick="speakText('Hello! I\\'m your humanoid AI assistant. I\\'m here to help you with any questions you might have. Feel free to ask me anything - from general knowledge to specific problems, I\\'m ready to assist you!', this)" title="Listen to this message">🔊</div>
+                            <div class="speaker-icon" onclick="speakText('Welcome to AmLI - Adaptive Monitoring Layered Intelligence! I\'m here to help you with job applications, certificate searches, offer letters, and any other AmLI services. How can I assist you today?', this)" title="Listen to this message">🔊</div>
                         </div>
-                        <div>Hello! I'm your humanoid AI assistant. I'm here to help you with any questions you might have. Feel free to ask me anything - from general knowledge to specific problems, I'm ready to assist you!</div>
+                        <div>Welcome to AmLI - Adaptive Monitoring Layered Intelligence! I'm here to help you with job applications, certificate searches, offer letters, and any other AmLI services. How can I assist you today?</div>
                         <div class="message-time">Just now</div>
                     </div>
                 </div>
@@ -802,7 +1031,7 @@
         }
 
         // Event listeners
-        sendButton.addEventListener('click', sendMessage);
+        sendButton.addEventListener('click', () => sendMessage());
         clearButton.addEventListener('click', clearHistory);
 
         messageInput.addEventListener('keypress', (e) => {
