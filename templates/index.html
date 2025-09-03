@@ -73,12 +73,15 @@
                 border-radius: 20px;
                 padding: 3px;
                 min-width: 280px; /* Ensure minimum width for buttons */
+                width: 100%;
+                max-width: 100%;
             }
             
             .chat-input {
                 padding: 12px 16px;
                 font-size: 15px;
                 min-width: 180px; /* Ensure minimum width for input */
+                width: 100%;
             }
             
             .plus-icon, .send-button {
@@ -958,10 +961,32 @@
             visibility: visible;
         }
 
-        /* Desktop and tablet optimizations */
-        @media (min-width: 717px) {
+        /* Tablet optimizations (iPad, small tablets) */
+        @media (min-width: 717px) and (max-width: 1023px) {
             .input-group {
-                max-width: 800px;
+                max-width: 90%;
+                width: 600px;
+                height: 56px;
+                margin: 0 auto;
+            }
+            
+            .chat-input {
+                max-width: 500px;
+                min-height: 46px;
+                max-height: 46px;
+            }
+            
+            .chat-input-container {
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        /* Desktop optimizations */
+        @media (min-width: 1024px) {
+            .input-group {
+                max-width: 95%;
+                width: 800px;
                 height: 56px;
                 margin: 0 auto;
             }
@@ -978,29 +1003,49 @@
             }
         }
 
-        /* Large screens - increase query box width */
-        @media (min-width: 1024px) {
+        /* Large desktop screens */
+        @media (min-width: 1280px) {
             .input-group {
-                max-width: 900px;
+                max-width: 90%;
+                width: 1000px;
                 height: 56px;
+                margin: 0 auto;
             }
             
             .chat-input {
-                max-width: 800px;
+                max-width: 900px;
                 min-height: 46px;
                 max-height: 46px;
             }
         }
 
-        /* Extra large screens - maximum width */
-        @media (min-width: 1280px) {
+        /* Extra large screens */
+        @media (min-width: 1440px) {
             .input-group {
-                max-width: 1000px;
+                max-width: 85%;
+                width: 1200px;
                 height: 56px;
+                margin: 0 auto;
             }
             
             .chat-input {
-                max-width: 900px;
+                max-width: 1100px;
+                min-height: 46px;
+                max-height: 46px;
+            }
+        }
+
+        /* Ultra wide screens */
+        @media (min-width: 1920px) {
+            .input-group {
+                max-width: 80%;
+                width: 1400px;
+                height: 56px;
+                margin: 0 auto;
+            }
+            
+            .chat-input {
+                max-width: 1300px;
                 min-height: 46px;
                 max-height: 46px;
             }
@@ -1627,14 +1672,14 @@
 
         // Auto-resize textarea
         messageInput.addEventListener('input', () => {
-            const isDesktop = window.innerWidth >= 740;
+            const isDesktop = window.innerWidth >= 717;
             if (isDesktop) {
                 // On desktop, maintain fixed height of 46px
                 messageInput.style.height = '46px';
             } else {
                 // On mobile, allow expansion with top alignment
                 messageInput.style.height = 'auto';
-                messageInput.style.height = Math.min(messageInput.scrollHeight, 1000) + 'px';
+                messageInput.style.height = Math.min(messageInput.scrollHeight, 150) + 'px';
             }
             sendButton.disabled = !messageInput.value.trim();
         });
