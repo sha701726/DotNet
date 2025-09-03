@@ -29,7 +29,7 @@
         }
 
         /* Mobile-specific fixes */
-        @media (max-width: 767px) {
+        @media (max-width: 716px) {
             .chat-header {
                 padding: 10px 15px;
                 min-height: 70px;
@@ -72,17 +72,20 @@
             .input-group {
                 border-radius: 20px;
                 padding: 3px;
+                min-width: 280px; /* Ensure minimum width for buttons */
             }
             
             .chat-input {
                 padding: 12px 16px;
                 font-size: 15px;
+                min-width: 180px; /* Ensure minimum width for input */
             }
             
             .plus-icon, .send-button {
                 width: 35px;
                 height: 35px;
                 font-size: 16px;
+                flex-shrink: 0; /* Prevent buttons from shrinking */
             }
             
             .sidebar {
@@ -126,7 +129,70 @@
 
             /* Prevent zoom on input focus */
             .chat-input {
+                font-size: 16px !important;
+            }
+        }
+
+        /* Very small screens - prevent button compression */
+        @media (max-width: 370px) {
+            .chat-input-container {
+                padding: 10px;
+            }
+            
+            .input-group {
+                min-width: 260px;
+                padding: 2px;
+            }
+            
+            .chat-input {
+                padding: 10px 12px;
+                font-size: 14px;
+                min-width: 160px;
+            }
+            
+            .plus-icon, .send-button {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+                flex-shrink: 0;
+            }
+            
+            .chat-header {
+                padding: 8px 10px;
+                min-height: 60px;
+            }
+            
+            .chat-header h1 {
                 font-size: 16px;
+            }
+            
+            .chat-header p {
+                font-size: 10px;
+            }
+        }
+
+        /* Extra small screens - maintain button integrity */
+        @media (max-width: 320px) {
+            .input-group {
+                min-width: 240px;
+                flex-wrap: nowrap;
+            }
+            
+            .chat-input {
+                min-width: 140px;
+                padding: 8px 10px;
+                font-size: 13px;
+            }
+            
+            .plus-icon, .send-button {
+                width: 30px;
+                height: 30px;
+                font-size: 13px;
+                flex-shrink: 0;
+            }
+            
+            .chat-input-container {
+                padding: 8px;
             }
         }
 
@@ -238,25 +304,20 @@
         }
 
         .history-item:hover {
-            background: transparent;
-            transform: none;
             text-decoration: underline;
         }
 
         .history-item.active {
-            background: transparent;
             color: #ffffff;
             font-weight: bold;
         }
 
         .history-item:active {
             transform: none;
-            background: transparent;
         }
 
         .history-item:focus {
             outline: none;
-            background: transparent;
         }
 
         .history-item .timestamp {
@@ -302,20 +363,15 @@
         }
 
         .quick-action-link:hover {
-            background: transparent;
-            transform: none;
-            color: #ffffff;
             text-decoration: underline;
         }
 
         .quick-action-link:active {
             transform: none;
-            background: transparent;
         }
 
         .quick-action-link:focus {
             outline: none;
-            background: transparent;
         }
 
         /* Clear Button */
@@ -339,20 +395,16 @@
         }
 
         .clear-btn:hover {
-            background: transparent;
-            transform: none;
             color: #ff5252;
             border-color: #ff5252;
         }
 
         .clear-btn:active {
             transform: none;
-            background: transparent;
         }
 
         .clear-btn:focus {
             outline: none;
-            background: transparent;
         }
 
         /* Main Chat Area */
@@ -624,13 +676,13 @@
 
         .input-group {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             background: #ffffff;
             border-radius: 25px;
             padding: 5px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            flex-wrap: nowrap;
         }
-
         .chat-input {
             flex: 1;
             padding: 15px 20px;
@@ -640,6 +692,11 @@
             outline: none;
             background: transparent;
             color: #000000;
+            resize: none;
+            overflow: hidden;
+            min-height: 40px;
+            max-height: 150px;
+            line-height: 1.4;
         }
 
         .chat-input::placeholder {
@@ -661,6 +718,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
+            flex-shrink: 0;
         }
 
         .plus-icon:hover {
@@ -801,6 +859,7 @@
             justify-content: center;
             margin-right: 5px;
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
         .send-button:hover {
@@ -899,6 +958,53 @@
             visibility: visible;
         }
 
+        /* Desktop and tablet optimizations */
+        @media (min-width: 717px) {
+            .input-group {
+                max-width: 800px;
+                height: 56px;
+                margin: 0 auto;
+            }
+            
+            .chat-input {
+                max-width: 700px;
+                min-height: 46px;
+                max-height: 46px;
+            }
+            
+            .chat-input-container {
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        /* Large screens - increase query box width */
+        @media (min-width: 1024px) {
+            .input-group {
+                max-width: 900px;
+                height: 56px;
+            }
+            
+            .chat-input {
+                max-width: 800px;
+                min-height: 46px;
+                max-height: 46px;
+            }
+        }
+
+        /* Extra large screens - maximum width */
+        @media (min-width: 1280px) {
+            .input-group {
+                max-width: 1000px;
+                height: 56px;
+            }
+            
+            .chat-input {
+                max-width: 900px;
+                min-height: 46px;
+                max-height: 46px;
+            }
+        }
         
     </style>
 </head>
@@ -989,7 +1095,7 @@
                     <!-- Hidden File Inputs -->
                     <input type="file" id="documentInput" class="file-upload-input" accept="*/*" onchange="handleFileUpload(this, 'document')">
                     
-                    <input type="text" id="messageInput" class="chat-input" placeholder="Ask anything" autocomplete="off">
+                                         <textarea id="messageInput" class="chat-input" placeholder="Ask anything" autocomplete="off" rows="1"></textarea>
                     <button id="sendButton" class="send-button">
                         <div><i class="fa-regular fa-paper-plane"></i></div>
                     </button>
@@ -1519,9 +1625,21 @@
             }
         });
 
+        // Auto-resize textarea
         messageInput.addEventListener('input', () => {
+            const isDesktop = window.innerWidth >= 740;
+            if (isDesktop) {
+                // On desktop, maintain fixed height of 46px
+                messageInput.style.height = '46px';
+            } else {
+                // On mobile, allow expansion with top alignment
+                messageInput.style.height = 'auto';
+                messageInput.style.height = Math.min(messageInput.scrollHeight, 1000) + 'px';
+            }
             sendButton.disabled = !messageInput.value.trim();
         });
+
+
 
         // Load conversations from localStorage when page loads
         loadConversationsFromStorage();
@@ -1618,6 +1736,17 @@
             // Clear file input
             document.getElementById('documentInput').value = '';
         }
+
+        // Handle window resize for responsive textarea
+        window.addEventListener('resize', () => {
+            const isDesktop = window.innerWidth >= 717;
+            if (isDesktop) {
+                messageInput.style.height = '46px';
+            } else {
+                messageInput.style.height = 'auto';
+                messageInput.style.height = Math.min(messageInput.scrollHeight, 150) + 'px';
+            }
+        });
 
         // Focus on input when page loads
         messageInput.focus();
