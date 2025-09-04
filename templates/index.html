@@ -30,65 +30,180 @@
 
         /* Mobile-specific fixes */
         @media (max-width: 716px) {
+            .chat-container {
+                height: 100vh;
+                height: 100dvh; /* Dynamic viewport height for mobile keyboards */
+            }
+            
             .chat-header {
-                padding: 10px 15px;
-                min-height: 70px;
+                padding: 8px 15px;
+                min-height: 50px;
+                flex-shrink: 0;
             }
             
             .chat-header h1 {
-                font-size: 18px;
-                margin-bottom: 3px;
+                font-size: 16px;
+                margin-bottom: 2px;
             }
             
             .chat-header p {
-                font-size: 11px;
+                font-size: 10px;
                 line-height: 1.2;
             }
             
             .chat-messages {
                 padding: 0 15px;
-                gap: 12px;
-                max-height: calc(100vh - 180px);
+                gap: 10px;
+                flex: 1;
+                overflow-y: auto;
+                min-height: 0;
+                padding-bottom: 10px;
             }
 
             .chat-messages .message:first-child {
-                margin-top: 15px;
+                margin-top: 10px;
             }
 
             .chat-messages .message:last-child {
-                margin-bottom: 15px;
+                margin-bottom: 10px;
             }
             
             .message-content {
                 max-width: 85%;
-                padding: 12px 16px;
+                padding: 10px 14px;
                 font-size: 14px;
             }
             
             .chat-input-container {
-                padding: 15px;
+                padding: 8px 15px 12px 15px;
+                flex-shrink: 0;
+                background: #ffffff;
+                border-top: 1px solid #e5e5e5;
+                position: relative;
+                z-index: 100;
+                min-height: 60px;
             }
             
             .input-group {
                 border-radius: 20px;
                 padding: 3px;
-                min-width: 280px; /* Ensure minimum width for buttons */
+                min-width: 280px;
                 width: 100%;
                 max-width: 100%;
+                display: flex;
+                align-items: flex-end;
             }
             
             .chat-input {
-                padding: 12px 16px;
-                font-size: 15px;
-                min-width: 180px; /* Ensure minimum width for input */
+                padding: 10px 14px;
+                font-size: 16px; /* Prevent zoom on iOS */
+                min-width: 180px;
                 width: 100%;
+                border: none;
+                outline: none;
+                resize: none;
+                overflow: hidden;
+                min-height: 36px;
+                max-height: 100px;
+                line-height: 1.4;
             }
             
             .plus-icon, .send-button {
-                width: 35px;
-                height: 35px;
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+                flex-shrink: 0;
+            }
+            
+            /* Sidebar improvements for mobile */
+            .sidebar {
+                width: 280px;
+                left: -280px;
+                z-index: 999;
+            }
+            
+            .sidebar-header {
+                padding: 12px 15px;
+                min-height: 50px;
+            }
+            
+            .sidebar-header h4 {
                 font-size: 16px;
-                flex-shrink: 0; /* Prevent buttons from shrinking */
+                margin-bottom: 3px;
+            }
+            
+            .sidebar-header p {
+                font-size: 11px;
+            }
+            
+            /* Quick actions mobile improvements */
+            .quick-actions-section {
+                padding: 0;
+            }
+            
+            .quick-actions-header {
+                padding: 12px 15px;
+            }
+            
+            .quick-actions-header h4 {
+                font-size: 13px;
+                margin: 0;
+            }
+            
+            .quick-actions-arrow {
+                font-size: 11px;
+            }
+            
+            .quick-action-link {
+                padding: 10px 15px;
+                font-size: 12px;
+                min-height: 40px;
+                gap: 10px;
+            }
+            
+            .quick-action-link i {
+                font-size: 12px;
+                width: 14px;
+            }
+            
+            /* Clear button mobile improvements */
+            .clear-section {
+                padding: 15px;
+            }
+            
+            .clear-btn {
+                padding: 10px 12px;
+                font-size: 13px;
+                min-height: 40px;
+            }
+            
+            /* History section mobile improvements */
+            .history-section {
+                padding: 15px;
+            }
+            
+            .history-item {
+                padding: 10px 12px;
+                font-size: 12px;
+                min-height: 40px;
+            }
+            
+            .history-item .timestamp {
+                font-size: 10px;
+                margin-top: 3px;
+            }
+            
+            /* Hamburger menu mobile improvements */
+            .hamburger-menu {
+                top: 10px;
+                left: 10px;
+                padding: 6px;
+            }
+            
+            .hamburger-icon {
+                width: 18px;
+                height: 2px;
+                margin: 3px 0;
             }
             
             .sidebar {
@@ -138,8 +253,39 @@
 
         /* Very small screens - prevent button compression */
         @media (max-width: 370px) {
+            .chat-container {
+                height: 100vh;
+                height: 100dvh;
+            }
+            
+            .chat-header {
+                padding: 6px 10px;
+                min-height: 45px;
+            }
+            
+            .chat-header h1 {
+                font-size: 14px;
+                margin-bottom: 1px;
+            }
+            
+            .chat-header p {
+                font-size: 9px;
+            }
+            
+            .chat-messages {
+                padding: 0 10px;
+                gap: 8px;
+            }
+            
+            .message-content {
+                max-width: 90%;
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+            
             .chat-input-container {
-                padding: 10px;
+                padding: 6px 10px 10px 10px;
+                min-height: 55px;
             }
             
             .input-group {
@@ -148,54 +294,212 @@
             }
             
             .chat-input {
-                padding: 10px 12px;
-                font-size: 14px;
-                min-width: 160px;
-            }
-            
-            .plus-icon, .send-button {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-                flex-shrink: 0;
-            }
-            
-            .chat-header {
-                padding: 8px 10px;
-                min-height: 60px;
-            }
-            
-            .chat-header h1 {
+                padding: 8px 12px;
                 font-size: 16px;
-            }
-            
-            .chat-header p {
-                font-size: 10px;
-            }
-        }
-
-        /* Extra small screens - maintain button integrity */
-        @media (max-width: 320px) {
-            .input-group {
-                min-width: 240px;
-                flex-wrap: nowrap;
-            }
-            
-            .chat-input {
-                min-width: 140px;
-                padding: 8px 10px;
-                font-size: 13px;
+                min-width: 160px;
+                min-height: 32px;
+                max-height: 80px;
             }
             
             .plus-icon, .send-button {
                 width: 30px;
                 height: 30px;
-                font-size: 13px;
+                font-size: 12px;
                 flex-shrink: 0;
             }
             
+            /* Sidebar adjustments */
+            .sidebar {
+                width: 260px;
+            }
+            
+            .sidebar-header {
+                padding: 10px 12px;
+                min-height: 45px;
+            }
+            
+            .sidebar-header h4 {
+                font-size: 14px;
+            }
+            
+            .sidebar-header p {
+                font-size: 10px;
+            }
+            
+            .quick-actions-section {
+                padding: 0;
+            }
+            
+            .quick-actions-header {
+                padding: 10px 12px;
+            }
+            
+            .quick-actions-header h4 {
+                font-size: 12px;
+            }
+            
+            .quick-actions-arrow {
+                font-size: 10px;
+            }
+            
+            .quick-action-link {
+                padding: 8px 12px;
+                font-size: 11px;
+                min-height: 36px;
+                gap: 8px;
+            }
+            
+            .quick-action-link i {
+                font-size: 11px;
+                width: 12px;
+            }
+            
+            .clear-section, .history-section {
+                padding: 12px;
+            }
+            
+            .clear-btn, .history-item {
+                padding: 8px 10px;
+                font-size: 12px;
+                min-height: 36px;
+            }
+            
+            .hamburger-menu {
+                top: 8px;
+                left: 8px;
+                padding: 5px;
+            }
+            
+            .hamburger-icon {
+                width: 16px;
+                height: 1.5px;
+                margin: 2px 0;
+            }
+        }
+
+        /* Extra small screens - maintain button integrity */
+        @media (max-width: 320px) {
+            .chat-container {
+                height: 100vh;
+                height: 100dvh;
+            }
+            
+            .chat-header {
+                padding: 5px 8px;
+                min-height: 40px;
+            }
+            
+            .chat-header h1 {
+                font-size: 13px;
+            }
+            
+            .chat-header p {
+                font-size: 8px;
+            }
+            
+            .chat-messages {
+                padding: 0 8px;
+                gap: 6px;
+            }
+            
+            .message-content {
+                max-width: 92%;
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
             .chat-input-container {
-                padding: 8px;
+                padding: 5px 8px 8px 8px;
+                min-height: 50px;
+            }
+            
+            .input-group {
+                min-width: 240px;
+                flex-wrap: nowrap;
+                padding: 1px;
+            }
+            
+            .chat-input {
+                min-width: 140px;
+                padding: 6px 10px;
+                font-size: 16px;
+                min-height: 28px;
+                max-height: 70px;
+            }
+            
+            .plus-icon, .send-button {
+                width: 28px;
+                height: 28px;
+                font-size: 11px;
+                flex-shrink: 0;
+            }
+            
+            /* Sidebar adjustments */
+            .sidebar {
+                width: 240px;
+            }
+            
+            .sidebar-header {
+                padding: 8px 10px;
+                min-height: 40px;
+            }
+            
+            .sidebar-header h4 {
+                font-size: 13px;
+            }
+            
+            .sidebar-header p {
+                font-size: 9px;
+            }
+            
+            .quick-actions-section {
+                padding: 0;
+            }
+            
+            .quick-actions-header {
+                padding: 8px 10px;
+            }
+            
+            .quick-actions-header h4 {
+                font-size: 11px;
+            }
+            
+            .quick-actions-arrow {
+                font-size: 9px;
+            }
+            
+            .quick-action-link {
+                padding: 6px 10px;
+                font-size: 10px;
+                min-height: 32px;
+                gap: 6px;
+            }
+            
+            .quick-action-link i {
+                font-size: 10px;
+                width: 10px;
+            }
+            
+            .clear-section, .history-section {
+                padding: 10px;
+            }
+            
+            .clear-btn, .history-item {
+                padding: 6px 8px;
+                font-size: 11px;
+                min-height: 32px;
+            }
+            
+            .hamburger-menu {
+                top: 6px;
+                left: 6px;
+                padding: 4px;
+            }
+            
+            .hamburger-icon {
+                width: 14px;
+                height: 1px;
+                margin: 2px 0;
             }
         }
 
@@ -338,35 +642,78 @@
 
         /* Quick Actions Section */
         .quick-actions-section {
-            padding: 20px;
+            padding: 0;
             border-top: 1px solid #333;
             background: #1a1a1a;
         }
 
-        .quick-actions-section h4 {
+        .quick-actions-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #333;
+        }
+
+        .quick-actions-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .quick-actions-header h4 {
             color: white;
             font-size: 14px;
-            margin-bottom: 15px;
-            text-align: center;
+            margin: 0;
+            text-align: left;
+        }
+
+        .quick-actions-arrow {
+            color: #888;
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .quick-actions-arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .quick-actions-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #1a1a1a;
+        }
+
+        .quick-actions-menu.open {
+            max-height: 300px;
         }
 
         .quick-action-link {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             color: #ffffff;
             text-decoration: none;
-            padding: 10px 15px;
-            margin-bottom: 8px;
+            padding: 12px 20px;
+            margin: 0;
             background: transparent;
             border: none;
             border-radius: 0;
             transition: all 0.2s ease;
             font-size: 13px;
-            text-align: center;
+            text-align: left;
             position: relative;
+            border-bottom: 1px solid #333;
+        }
+
+        .quick-action-link:last-child {
+            border-bottom: none;
         }
 
         .quick-action-link:hover {
-            text-decoration: underline;
+            background: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
         }
 
         .quick-action-link:active {
@@ -375,6 +722,17 @@
 
         .quick-action-link:focus {
             outline: none;
+        }
+
+        .quick-action-link i {
+            font-size: 14px;
+            width: 16px;
+            text-align: center;
+            color: #4CAF50;
+        }
+
+        .quick-action-link span {
+            flex: 1;
         }
 
         /* Clear Button */
@@ -1084,11 +1442,28 @@
             
             <!-- Quick Actions Section -->
             <div class="quick-actions-section">
-                <h4>Quick Actions</h4>
-                <a href="#" class="quick-action-link" onclick="quickAction('job')">Apply for Job/Internship</a>
-                <a href="#" class="quick-action-link" onclick="quickAction('certificate')">Search Certificate</a>
-                <a href="#" class="quick-action-link" onclick="quickAction('offer')">Find Offer Letter</a>
-                <a href="#" class="quick-action-link" onclick="quickAction('info')">AmLI Information</a>
+                <div class="quick-actions-header" onclick="toggleQuickActions()">
+                    <h4>Quick Actions</h4>
+                    <i class="fas fa-chevron-down quick-actions-arrow" id="quickActionsArrow"></i>
+                </div>
+                <div class="quick-actions-menu" id="quickActionsMenu">
+                    <a href="#" class="quick-action-link" onclick="quickAction('job')">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Apply for Job/Internship</span>
+                    </a>
+                    <a href="#" class="quick-action-link" onclick="quickAction('certificate')">
+                        <i class="fas fa-certificate"></i>
+                        <span>Search Certificate</span>
+                    </a>
+                    <a href="#" class="quick-action-link" onclick="quickAction('offer')">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Find Offer Letter</span>
+                    </a>
+                    <a href="#" class="quick-action-link" onclick="quickAction('info')">
+                        <i class="fas fa-info-circle"></i>
+                        <span>AmLI Information</span>
+                    </a>
+                </div>
             </div>
             
             <!-- Clear Button Section -->
@@ -1212,6 +1587,19 @@
             localStorage.setItem('amli_conversations', JSON.stringify(conversationSessions));
         }
 
+        function toggleQuickActions() {
+            const menu = document.getElementById('quickActionsMenu');
+            const arrow = document.getElementById('quickActionsArrow');
+            
+            if (menu.classList.contains('open')) {
+                menu.classList.remove('open');
+                arrow.classList.remove('rotated');
+            } else {
+                menu.classList.add('open');
+                arrow.classList.add('rotated');
+            }
+        }
+
         function quickAction(action) {
             let message = '';
             let intent = '';
@@ -1237,6 +1625,12 @@
             
             messageInput.value = message;
             sendMessage(intent);
+            
+            // Close Quick Actions menu after selection
+            const menu = document.getElementById('quickActionsMenu');
+            const arrow = document.getElementById('quickActionsArrow');
+            menu.classList.remove('open');
+            arrow.classList.remove('rotated');
             
             // Close sidebar on mobile after action
             if (window.innerWidth < 768) {
@@ -1791,6 +2185,65 @@
                 messageInput.style.height = Math.min(messageInput.scrollHeight, 150) + 'px';
             }
         });
+
+        // Mobile keyboard handling
+        function handleMobileKeyboard() {
+            if (window.innerWidth <= 716) {
+                // Store original viewport height
+                const initialViewportHeight = window.innerHeight;
+                let keyboardOpen = false;
+                
+                // Listen for resize events (keyboard show/hide)
+                window.addEventListener('resize', () => {
+                    const currentHeight = window.innerHeight;
+                    const heightDifference = initialViewportHeight - currentHeight;
+                    
+                    // If height decreased significantly, keyboard is likely open
+                    if (heightDifference > 150 && !keyboardOpen) {
+                        keyboardOpen = true;
+                        // Ensure input container is visible
+                        const inputContainer = document.querySelector('.chat-input-container');
+                        if (inputContainer) {
+                            inputContainer.style.position = 'relative';
+                            inputContainer.style.zIndex = '1000';
+                        }
+                        // Scroll to bottom to keep input visible
+                        setTimeout(() => {
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 100);
+                    } else if (heightDifference <= 50 && keyboardOpen) {
+                        keyboardOpen = false;
+                        // Reset input container
+                        const inputContainer = document.querySelector('.chat-input-container');
+                        if (inputContainer) {
+                            inputContainer.style.position = '';
+                            inputContainer.style.zIndex = '';
+                        }
+                    }
+                });
+                
+                // Focus input and scroll to bottom when input is focused
+                messageInput.addEventListener('focus', () => {
+                    setTimeout(() => {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        // Ensure input stays visible
+                        messageInput.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    }, 300);
+                });
+                
+                // Handle input blur to reset scroll if needed
+                messageInput.addEventListener('blur', () => {
+                    setTimeout(() => {
+                        if (!keyboardOpen) {
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }
+                    }, 100);
+                });
+            }
+        }
+
+        // Initialize mobile keyboard handling
+        handleMobileKeyboard();
 
         // Focus on input when page loads
         messageInput.focus();
